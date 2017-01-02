@@ -1,0 +1,50 @@
+Importation de donnees spatiales.
+
++Utilitaire d'importation de donnees LayerMapping
+But: importer le fichier des frontieres mondiales dans une base de donnees via les modeles GeoDjango.
+(1) en utilisant ogr2ogr:
+	*En ligne de commandde.
+	Peut importer de nombreux formats de donnees vectorielles dans des bases de donees PostGis, MySQL et Oracle.
+(2)shp2pgsql:
+	*Inclut dans PostGIS	
+	Importe des shapefiles ESRI dans PostGIS.
+
+Utilisation de l'interface Python verd la puissante bibliotheque OGR de GDAL, qui est capable de traiter toutes les sources de donnees vectorielles prises en charge par OGR.
+
+	python manage.py shell -> entrer dans l'interface python du project
+
+/* Dans l'interface python : */
+>> import os  <- pour determiner le chemin de son fichier
+>> import world
+world_shp = os.path.abspath(os.path.join(os.path.dirname(world.__file__),
+					'data', 'TM_WORLD_BORDERS-0.3.shp'))
+ Utilisez l'interface DataSource fournit avec GeoDjango pour ouvrir le shapefile des frontieres mondiales.
+>> from django.contrib.gis.gdal import DataSource
+ds = DataSource(world_shp)
+!: ESRI fait reference a Environmental Systems Research Institue, une societe editrice de systems d'information geographique.
+
+>>lyr = ds[0]
+>>lyr.geom_type 
+>>lyr.srs <- renvoie un objet SpatialReference, si un system de reference spatial est associe a l'objet Layer
+
+WGS84 est  un system de reference spatial bien connu. Les donnees sont representees par des couples longitude/latitude en degres.
+L'attribut fields indiques les champs de l'objet
+L'attribut field_types indiques le type de chaque champs
+On peut parcourir les object de la couche (Layer) :
+>>for obj in lyr:
+>>	print(obj.get('NAME'), obj.geom.num_points)
+les couches peuvent etre segmentes, layer[0:2], et les objs recuperees par leur identifiant obje
+obj = layer[237]
+
+Les object geometriques peuvent etre exportes en tant que WKT ou GeoJSON
+>>geom = obj.geom
+>>geom.wkt
+>>geom.json
+
+
+Importer avec LayerMapping:
+
+	Un object LayerMapping doit etre utiliser dans un script si l'on veut import des donnees.
+Creons un fichier load.py dans l'application world.
+
+

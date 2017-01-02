@@ -1,0 +1,101 @@
+{% load leaflet_tags %}
+{% load static %}
+<html>
+
+  <meta charset="utf-8">
+  
+
+  <head class>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <!-- style tag and django-leaflet tag here -->
+      <script src="{% static 'leaflet-ajax/dist/leaflet.ajax.min.js' %}"></script>
+      <script src="{% static 'spin.js/spin.min.js' %}"></script>
+      <script src="{% static 'leaflet-spin/leaflet.spin.js' %}"></script> 
+    <link rel="stylesheet" type="text/css" href={% static "world/style1.css" %}>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <style>
+        .leaflet-container { height: 100%; }
+    </style>
+  </head>
+  <body>
+    <h1 class="world_header" id="display_title">Displaying the map</h1>
+    <div id='map' class="leaflet_container"></div>
+    
+
+    <script type="text/javascript">
+
+
+        function gup( name, url ) {
+            //Used to retrieve parameters in url
+            if (!url) url = location.href;
+            name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+            var regexS = "[\\?&]"+name+"=([^&#]*)";
+            var regex = new RegExp( regexS );
+            var results = regex.exec( url );
+            return results == null ? null : results[1];
+        }
+        
+        main_map_init();
+        function main_map_init () {
+            var params = gup('country_id', document.href);
+            var params2 = gup('display_mode', document.href);
+
+            if(params2 == 1){
+                document.getElementById("display_title").innerHTML = "Urban Areas in Selected Place :";
+            }
+            else if(params2 == 2){
+                document.getElementById("display_title").innerHTML = "Airports in Selected Place :";
+            }
+            else if(params2 == 3){
+                document.getElementById("display_title").innerHTML = "Administrative borders at Selected Place (and neightborhood) :";
+            }
+            else if(params2 == 4){
+                document.getElementById("display_title").innerHTML = "Selected Place Covered Area :";
+            }
+
+
+            console.log("country id : " + params);
+            console.log("display mode : " + params2);
+            var dataurl = "{% url 'data' %}?country_id=" + params +
+                            "&display_mode=" + params2 ;
+            console.log("params2 : " + dataurl);
+            // Download GeoJSON via Ajax
+
+            $.getJSON(dataurl, function (data) {
+                // Add GeoJSON layer
+                var mapOptions = {
+                    zoom: 9,
+                    attributionControl: true,
+                };
+               
+               var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 5,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                });
+               
+                console.log("params2 : " + dataurl);
+               var map = L.map("map", {
+                               zoom: 1,
+                               center: [15.505, 40.999],
+                               layers: [OpenStreetMap_Mapnik],
+                               
+                });
+
+                var myLayer = L.geoJson(data, {
+                    onEachFeature: setFeature
+                }).addTo(map);
+            });
+        }
+
+        function setFeature(feature, layer){
+            if( feature.properties.name){
+                layer.bindPopup(feature.properties.name);
+            }else if(feature.properties.area_sqkm){
+                layer.bindPopup("area(km^2) : " + feature.properties.area_sqkm.toString());
+            }
+        }
+    </script>
+    
+  </body>
+</html>

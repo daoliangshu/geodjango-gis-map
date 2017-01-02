@@ -1,0 +1,13 @@
+{% load static %}
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href={% static "world/style_index.css" %}>
+</head>
+<body>
+<h1> Select What you want to display </h1>
+<form method="POST" action="">
+	{% csrf_token %}
+	{{ display_form.as_p  }}
+	<button type="submit" name="submit_btn">Display</button>
+</form>
+</body>
