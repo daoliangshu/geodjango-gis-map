@@ -1,21 +1,4 @@
 from django.contrib.gis.db import models
-"""
-class AirMeasurement(models.Model):
-    
-    wmoid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=256)
-    air_quality_station = models.CharField(max_length=256)
-    time_zone = models.CharField(max_length=256)
-    country_code = models.CharField(max_length=256)
-    sample = models.CharField(max_length=256)
-    geom = models.PointField()
-
-    def __str__(self):
-        return self.name
-    class Meta:
-        app_label = 'world'"""
-
-
 
 class AirportModel(models.Model):
     scalerank = models.IntegerField()
@@ -88,24 +71,5 @@ class AdminBoundaryModel(models.Model):
     @property
     def prop_name(self):
         return self.name
-
-
-
-
-
-"""
-class WeatherStation(models.Model):
-
-    wmoid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=256)
-
-    geom = models.PointField()
-
-    objects = models.GeoManager()
-
-    def __unicode__(self):
-        return self.name
-        """
-
 
 

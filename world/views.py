@@ -10,7 +10,6 @@ import datetime
 
 
 def display_form(request):
-    print('hudada')
     if request.method=='POST':
         form = forms.ChooseCountryForm(request.POST)
 
@@ -18,22 +17,13 @@ def display_form(request):
             print(form.cleaned_data['name'])
             country = models.WorldBorderModel.objects.filter(id=request.POST['name'])
             print(country[0].get_geom().centroid)
-            #,
             return HttpResponseRedirect(reverse('home')+'?country_id=%s&display_mode=%s' \
                                        %(request.POST['name'], request.POST['result_mode']))
-            #set_cookie(response, 'country_id', request.POST['name'])
-            #return response
     else:
 
         form = forms.ChooseCountryForm()
         return render(request, 'world/display_form.html',
                     {'display_form' : form})
-
-
-#def get_center(request):
-#    country_id = request.GET.get('country_id', 30)
-#    center_point = models.WorldBorderModel.objects.get(id=country_id).get_geom().centroid
-#    return HttpResponse(res, content_type='text/javascript')
 
 def get_serealize(request):
     country_id = request.GET.get('country_id', 30)
@@ -42,8 +32,6 @@ def get_serealize(request):
     if country_id is not None:
         country_to_search = models.WorldBorderModel.objects.get(id=country_id).get_name()
     subres = models.WorldBorderModel.objects.get(id=country_id).get_geom()
-    #for country in models.WorldBorderModel.objects.filter(name=country_to_search):
-    #    subres.append(country)
     data = None
     if display_mode == 1:
         """ Display Urban Areas in selected country """
@@ -78,20 +66,10 @@ def get_serealize(request):
         jsonized = serialize('geojson', data,
                     geometry_field='geom',
                     fields=('name',)
-                )
-
-        #print(subres[0].geom)                                      
-        #max_area = get_max_urban_area_in_country(str(subres[0].geom))
-        #res_count = data.count()
-    """while res_count > 300:
-        max_area /= 2 -1
-        print('da')
-        data = get_urbans_in_country_lt(str(subres[0].geom), max_area )
-        res_count = data.count()
-    """
-
+                )        
+    # max_area = get_max_urban_area_in_country(str(subres))
+    # data = get_urbans_in_country_lt(str(subres), max_area )
     res = jsonized
-    #return render(request, jsonized)
     return HttpResponse(res, content_type='text/javascript')
 
 

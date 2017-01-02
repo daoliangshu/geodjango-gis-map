@@ -21,10 +21,9 @@ from world import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', views.display_form),
 	url(r'^index/', views.display_form),
     url(r'^data/', views.get_serealize, name='data',),
 	url(r'^data/(?P<country_id>\w{4})(?P<display_mode>\w{4})/$', views.get_serealize, name='data',),
-    #url(r'^center/(?(P<country_id>\w{4})/$', views.get_center, name='center'),
-	#url(r'^data/$', GeoJSONLayerView.as_view(model=WorldBorder, properties=('name')), name='data'),
     url(r'^display/', TemplateView.as_view(template_name='./world/leaflet_template.html'),name='home'),	
 ]
