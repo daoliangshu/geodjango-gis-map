@@ -1,6 +1,6 @@
 import os
 from django.contrib.gis.utils import LayerMapping
-from .models import AdminBoundaryModelS
+from .models import AdminBoundaryModel
 
 adminboundarymodel_mapping = {
     'fid_ne_10m' : 'FID_ne_10m',

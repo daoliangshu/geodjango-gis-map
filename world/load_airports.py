@@ -13,7 +13,7 @@ airportmodel_mapping = {
     'iata_code' : 'iata_code',
     'wikipedia' : 'wikipedia',
     'natlscale' : 'natlscale',
-    'geom' : 'MULTIPOINT',
+    'geom' : 'POINT',
 }
 
 file_shp = os.path.abspath(
